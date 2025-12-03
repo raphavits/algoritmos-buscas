@@ -18,6 +18,28 @@ body {
     margin-top: 7%;
 }
 
+nav {
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 40px;
+    width: 90%px;
+    border-radius: 10px;
+    font-size: 22px;
+    font-weight: 700;
+
+    background: linear-gradient(270deg, #8e59cf, #5f6bff, #BB86FC, #4e1a8f);
+    background-size: 600% 600%;
+    animation: deslizando 12s ease infinite;
+}
+
+@keyframes deslizando {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
 h2 {
     color: #BB86FC;
 }
@@ -28,9 +50,11 @@ button {
     padding: 10px;
     border: none;
     border-radius: 10px;
-    background: #BB86FC;
     color: white;
     cursor: pointer;
+    background: linear-gradient(270deg, #8e59cf, #BB86FC, #bf8efa);
+    background-size: 600% 600%;
+    animation: deslizando 12s ease infinite;
 }
 
 button:hover {

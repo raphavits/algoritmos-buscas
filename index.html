@@ -9,11 +9,25 @@
 
 <body>
 
+    <nav>Projeto N2 Algoritmos e Estrutura de Dados</nav>
+
 <div class="box">
     <h2>Escolha o tipo de busca</h2>
 
     <label>Nome para buscar:</label>
-    <input id="chave" type="text" placeholder="Digite o nome" style="width:85%;padding:8px;margin-bottom:10px;border-radius: 10px;background-color:#515c75; color:white; outline: none; border: none;">
+    <input id="chave" type="text" placeholder="Digite o nome ou ID" style="width:85%;padding:8px;margin-bottom:10px;border-radius: 10px;background-color:#515c75; color:white; outline: none; border: none;">
+
+        <script>
+            const input = document.getElementById("chave");
+
+            input.addEventListener("input", function () {
+            let valor = input.value;
+
+            if (valor.length > 0) {
+            input.value = valor.charAt(0).toUpperCase() + valor.slice(1);
+            }
+            });
+        </script>
 
     <button onclick="executarSequencial()">🔍 Busca Sequencial</button>
     <button onclick="executarIndexada()">⚡ Busca Indexada</button>
@@ -22,41 +36,68 @@
     <div id="resultado">⚙️ Aguardando busca...</div>
 </div>
 
-<script src="dados_simples_5000.js"></script>
+<script src="dados_simples_5000_com_id.js"></script>
 
 <script>
 
 
+    const indiceNome = {};
+    const indiceID = {};
+    dados.forEach((item, pos) => {
+        indiceNome[item.nome] = pos;
+        indiceID[item.id] = pos;
+    });
 
-    
-    const indice = {};
-    dados.forEach((item, pos) => indice[item.nome] = pos);
 
-    
-    const hashmap = {};
-    dados.forEach(item => hashmap[item.nome] = item);
+    const hashmapNome = {};
+    const hashmapID = {};
+    dados.forEach(item => {
+        hashmapNome[item.nome] = item;
+        hashmapID[item.id] = item;
+    });
 
+
+    function identificarTipo(chave) {
+        return /^\d+$/.test(chave) ? "id" : "nome";
+    }
 
 
     function buscaSequencial(lista, chave) {
+        const tipo = identificarTipo(chave);
+
         for (let item of lista) {
-            if (item.nome === chave) return item;
+            if (tipo === "id" && item.id == chave) return item;
+            if (tipo === "nome" && item.nome === chave) return item;
         }
         return null;
     }
 
-    function buscaIndexada(indice, lista, chave) {
-        const pos = indice[chave];
-        return pos !== undefined ? lista[pos] : null;
+
+    function buscaIndexada(lista, chave) {
+        const tipo = identificarTipo(chave);
+
+        if (tipo === "id") {
+            const pos = indiceID[chave];
+            return pos !== undefined ? lista[pos] : null;
+        } else {
+            const pos = indiceNome[chave];
+            return pos !== undefined ? lista[pos] : null;
+        }
     }
 
-    function buscaHash(hashmap, chave) {
-        return hashmap[chave] || null;
+
+    function buscaHash(chave) {
+        const tipo = identificarTipo(chave);
+
+        return tipo === "id"
+            ? (hashmapID[chave] || null)
+            : (hashmapNome[chave] || null);
     }
+
 
 
     function executarSequencial() {
-        const chave = document.getElementById("chave").value;
+        const chave = document.getElementById("chave").value.trim();
         const inicio = performance.now();
         const resultado = buscaSequencial(dados, chave);
         const tempo = performance.now() - inicio;
@@ -64,17 +105,17 @@
     }
 
     function executarIndexada() {
-        const chave = document.getElementById("chave").value;
+        const chave = document.getElementById("chave").value.trim();
         const inicio = performance.now();
-        const resultado = buscaIndexada(indice, dados, chave);
+        const resultado = buscaIndexada(dados, chave);
         const tempo = performance.now() - inicio;
         mostrarResultado(resultado, tempo, "Busca Indexada");
     }
 
     function executarHash() {
-        const chave = document.getElementById("chave").value;
+        const chave = document.getElementById("chave").value.trim();
         const inicio = performance.now();
-        const resultado = buscaHash(hashmap, chave);
+        const resultado = buscaHash(chave);
         const tempo = performance.now() - inicio;
         mostrarResultado(resultado, tempo, "Busca HashMap");
     }
@@ -89,7 +130,9 @@
                 ⏱ Tempo: ${tempo.toFixed(6)} ms<br><br>
                 <b>Registro encontrado:</b><br>
                 ID: ${resultado.id}<br>
-                Nome: ${resultado.nome}
+                Nome: ${resultado.nome}<br>
+                Email: ${resultado.email}<br>
+                Telefone: ${resultado.telefone}
             `;
         } else {
             box.innerHTML = `
