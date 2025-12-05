@@ -4,63 +4,109 @@
 <meta charset="UTF-8">
 <title>Busca de Registros</title>
 <link rel="stylesheet" href="index.css">
+<style>
+    .container {
+        display: flex;
+        gap: 30px;
+        justify-content: center;
+        margin-top: 40px;
+    }
 
+    .lista-box {
+        width: 300px;
+        height: 500px;
+        overflow-y: scroll;
+        background: #202530;
+        padding: 15px;
+        border-radius: 10px;
+        color: white;
+        box-shadow: 0 0 10px #08090f;
+    }
+
+    .linha-registro {
+        padding: 5px 0;
+        border-bottom: 1px solid #444;
+        font-size: 15px;
+    }
+</style>
 </head>
 
 <body>
 
-    <nav>Projeto N2 Algoritmos e Estrutura de Dados</nav>
+<nav>Projeto N2 Algoritmos e Estrutura de Dados</nav>
 
-<div class="box">
-    <h2>Escolha o tipo de busca</h2>
+<div class="container">
 
-    <label>Nome para buscar:</label>
-    <input id="chave" type="text" placeholder="Digite o nome ou ID" style="width:85%;padding:8px;margin-bottom:10px;border-radius: 10px;background-color:#515c75; color:white; outline: none; border: none;">
+    <!-- BOX DAS BUSCAS -->
+    <div class="box">
+        <h2>Escolha o tipo de busca</h2>
+
+        <label>Nome para buscar:</label>
+        <input id="chave" type="text" placeholder="Digite o nome ou ID" style="width:85%;padding:8px;margin-bottom:10px;border-radius: 10px;background-color:#515c75; color:white; outline: none; border: none;">
 
         <script>
             const input = document.getElementById("chave");
 
             input.addEventListener("input", function () {
-            let valor = input.value;
+                let valor = input.value;
 
-            if (valor.length > 0) {
-            input.value = valor.charAt(0).toUpperCase() + valor.slice(1);
-            }
+                if (!/^\d+$/.test(valor)) {
+                    input.value = valor.charAt(0).toUpperCase() + valor.slice(1);
+                }
             });
         </script>
 
-    <button onclick="executarSequencial()">🔍 Busca Sequencial</button>
-    <button onclick="executarIndexada()">⚡ Busca Indexada</button>
-    <button onclick="executarHash()">🚀 Busca HashMap</button>
+        <button onclick="executarSequencial()">🔍 Busca Sequencial</button>
+        <button onclick="executarIndexada()">⚡ Busca Indexada</button>
+        <button onclick="executarHash()">🚀 Busca HashMap</button>
 
-    <div id="resultado">⚙️ Aguardando busca...</div>
+        <div id="resultado">⚙️ Aguardando busca...</div>
+    </div>
+
+    <!-- LISTA DOS REGISTROS -->
+    <div class="lista-box">
+        <h3>Lista de Registros</h3>
+        <div id="lista-registros"></div>
+    </div>
+
 </div>
 
 <script src="dados_simples_5000_com_id.js"></script>
 
 <script>
-
+    // ----------------------------------------------------------
+    // INDICES E HASHMAPS
+    // ----------------------------------------------------------
 
     const indiceNome = {};
     const indiceID = {};
+
     dados.forEach((item, pos) => {
         indiceNome[item.nome] = pos;
         indiceID[item.id] = pos;
     });
 
-
     const hashmapNome = {};
     const hashmapID = {};
+
     dados.forEach(item => {
         hashmapNome[item.nome] = item;
         hashmapID[item.id] = item;
     });
 
 
+    // ----------------------------------------------------------
+    // IDENTIFICAR SE É ID OU NOME
+    // ----------------------------------------------------------
+
     function identificarTipo(chave) {
         return /^\d+$/.test(chave) ? "id" : "nome";
     }
 
+
+    // ----------------------------------------------------------
+    // BUSCAS
+    // ----------------------------------------------------------
 
     function buscaSequencial(lista, chave) {
         const tipo = identificarTipo(chave);
@@ -71,7 +117,6 @@
         }
         return null;
     }
-
 
     function buscaIndexada(lista, chave) {
         const tipo = identificarTipo(chave);
@@ -85,7 +130,6 @@
         }
     }
 
-
     function buscaHash(chave) {
         const tipo = identificarTipo(chave);
 
@@ -95,6 +139,9 @@
     }
 
 
+    // ----------------------------------------------------------
+    // EXECUTAR BUSCAS
+    // ----------------------------------------------------------
 
     function executarSequencial() {
         const chave = document.getElementById("chave").value.trim();
@@ -121,6 +168,10 @@
     }
 
 
+    // ----------------------------------------------------------
+    // EXIBIR RESULTADO
+    // ----------------------------------------------------------
+
     function mostrarResultado(resultado, tempo, tipo) {
         const box = document.getElementById("resultado");
 
@@ -142,6 +193,25 @@
             `;
         }
     }
+
+
+    // ----------------------------------------------------------
+    // GERAR LISTA DE REGISTROS
+    // ----------------------------------------------------------
+
+    function carregarLista() {
+        const lista = document.getElementById("lista-registros");
+        lista.innerHTML = ""; 
+
+        dados.forEach(item => {
+            const linha = document.createElement("div");
+            linha.classList.add("linha-registro");
+            linha.innerHTML = `ID: ${item.id} — ${item.nome}`;
+            lista.appendChild(linha);
+        });
+    }
+
+    carregarLista();
 </script>
 
 </body>
